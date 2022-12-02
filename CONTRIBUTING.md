@@ -135,6 +135,63 @@ mix phx.server
 mix test
 ```
 
+Or on Ubuntu Jammy (22.04):
+
+```console
+# INSTALL DEPENDENCIES
+
+# install Node 14 via steps in https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04
+
+# then:
+sudo apt update && sudo apt install -y postgresql-14 elixir imagemagick
+
+# TODO
+npm i -g yarn
+
+# - PostgreSQL v14.5-0ubuntu0.22.04.1
+# - Elixir v1.12.2
+# - Erlang v24
+# - Node v14.21.1
+# - Yarn v1.22.19
+# - ImageMagick v7.1
+# The above was installed on an running macOS Ubuntu 22.04 in ~2 minutes - November 13, 2022 by @gerhard
+
+
+# CONFIGURE DATABASE
+# Add correct PostgreSQL to PATH
+export PATH="$(brew --prefix)/opt/postgresql@14/bin:$PATH"
+# Start PostgreSQL
+postgres -D $(brew --prefix)/var/postgresql@14
+# Create user "postgres" with password "postgres"
+createuser postgres --password --createdb
+# Create changelog_dev db owned by the postgres user
+createdb changelog_dev --username=postgres
+# Create changelog_test db owned by the postgres user
+createdb changelog_test --username=postgres
+
+# CONFIGURE APP
+# Install deps
+mix deps.get
+# Prepare dev database
+mix ecto.setup
+
+# CONFIGURE STATIC ASSETS
+cd assets
+# Add correct Node.js to PATH
+export PATH="$(brew --prefix)/opt/node@14/bin:$PATH"
+# Install dependencies requires for static assets
+yarn install
+cd ..
+
+# RUN APP
+mix phx.server
+# Go to http://localhost:4000
+
+# RUN TESTS
+mix test
+```
+
+
 ## How to upgrade Elixir || Erlang/OTP?
 
 1. Pick an image from [hexpm/elixir](https://hub.docker.com/r/hexpm/elixir/tags?page=1&ordering=last_updated&name=ubuntu-jammy)
